@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:weightSum="100">
+    <LinearLayout
+        android:layout_width="match_parent"
+	   android:layout_height="60dip"
+	   android:layout_weight="60"
+	   android:background="#39f"
+	   android:orientation="vertical"
+       android:paddingLeft="10dp"
+       android:paddingTop="10dp">
+       <LinearLayout
+        android:layout_width="match_parent"
+	   android:layout_height="wrap_content"
+	   android:paddingBottom="10dp">
+	        <TextView
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:text="Naat Title:"
+	            android:paddingRight="10dp"
+	            android:textColor="#fff"
+	            />
+	        <TextView
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:text="Something.mp3"
+	            android:textColor="#fff"
+	            />
+        </LinearLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Vocalist"
+            android:paddingBottom="10dp"
+            android:textColor="#fff"
+            />
+    </LinearLayout>
+        
+    <LinearLayout
+        android:layout_width="match_parent"
+	   android:layout_height="60dip"
+	   android:layout_weight="40"
+	   android:background="#fff"
+	   >
+        <Button
+            android:id="@+id/btnPlay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Play"
+            />
+        <Button
+            android:id="@+id/btnPause"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Pause"
+            />
+	</LinearLayout>
+
+</LinearLayout>
