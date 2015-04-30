@@ -15,30 +15,42 @@ public final class R {
     }
     public static final class drawable {
         public static final int action_search=0x7f020000;
-        public static final int drawer_shadow=0x7f020001;
-        public static final int earth=0x7f020002;
-        public static final int ic_drawer=0x7f020003;
-        public static final int ic_launcher=0x7f020004;
-        public static final int jupiter=0x7f020005;
-        public static final int mars=0x7f020006;
-        public static final int mercury=0x7f020007;
-        public static final int neptune=0x7f020008;
-        public static final int saturn=0x7f020009;
-        public static final int uranus=0x7f02000a;
-        public static final int venus=0x7f02000b;
+        public static final int btn_backward=0x7f020001;
+        public static final int btn_download=0x7f020002;
+        public static final int btn_forward=0x7f020003;
+        public static final int btn_pause=0x7f020004;
+        public static final int btn_play=0x7f020005;
+        public static final int drawer_shadow=0x7f020006;
+        public static final int earth=0x7f020007;
+        public static final int ic_drawer=0x7f020008;
+        public static final int ic_launcher=0x7f020009;
+        public static final int jupiter=0x7f02000a;
+        public static final int mars=0x7f02000b;
+        public static final int mercury=0x7f02000c;
+        public static final int neptune=0x7f02000d;
+        public static final int saturn=0x7f02000e;
+        public static final int seekbar_background=0x7f02000f;
+        public static final int seekbar_progress=0x7f020010;
+        public static final int seekbar_thumb=0x7f020011;
+        public static final int uranus=0x7f020012;
+        public static final int venus=0x7f020013;
     }
     public static final class id {
-        public static final int action_websearch=0x7f07000a;
-        public static final int btnPause=0x7f070004;
-        public static final int btnPlay=0x7f070003;
+        public static final int action_websearch=0x7f07000e;
+        public static final int btnBackward=0x7f070005;
+        public static final int btnDownload=0x7f070003;
+        public static final int btnForward=0x7f070007;
+        public static final int btnPlay=0x7f070006;
         public static final int content_frame=0x7f070001;
         public static final int drawer_layout=0x7f070000;
-        public static final int firstLine=0x7f070007;
-        public static final int icon=0x7f070006;
+        public static final int firstLine=0x7f07000b;
+        public static final int icon=0x7f07000a;
         public static final int left_drawer=0x7f070002;
-        public static final int mylist=0x7f070005;
-        public static final int secondLine=0x7f070008;
-        public static final int size=0x7f070009;
+        public static final int mylist=0x7f070008;
+        public static final int secondLine=0x7f07000c;
+        public static final int seekbar=0x7f070004;
+        public static final int size=0x7f07000d;
+        public static final int txtnoData=0x7f070009;
     }
     public static final class layout {
         public static final int activity_main=0x7f030000;

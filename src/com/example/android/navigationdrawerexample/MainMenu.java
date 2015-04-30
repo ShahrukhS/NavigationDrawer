@@ -18,11 +18,14 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainMenu extends BaseActivity{
 	ListView mMainListView;
+	TextView txtnoData;
 	MainModel[] values;
+	String title;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -30,8 +33,10 @@ public class MainMenu extends BaseActivity{
 		super.onCreate(savedInstanceState);
 		getLayoutInflater().inflate(R.layout.fragment_main, frameLayout);
 		mMainListView = (ListView) findViewById(R.id.mylist);
+		txtnoData = (TextView) findViewById(R.id.txtnoData);
 		mDrawerList.setItemChecked(position, true);
-		setTitle(mPlanetTitles[position]);
+		title = mPlanetTitles[position];
+		setTitle(title);
 		new Read().execute(this);
 		/*mMainListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
@@ -73,11 +78,11 @@ public class MainMenu extends BaseActivity{
 					for(int i=0; i<jArray.length(); i++){
 						//Log.d("data",);
 						JSONObject jObject = jArray.getJSONObject(i);
-						values[i] = new MainModel(jObject.getString("name"), "something", R.drawable.ic_launcher, 2.68);
+						values[i] = new MainModel(jObject.getString("name"), "something", R.drawable.ic_launcher, "2.68MB");
 					}
 				}else{
-					values = new MainModel[1];
-					values[0] = new MainModel("baby", "something", R.drawable.ic_launcher, 2.68);
+					values = new MainModel[0];
+					txtnoData.setText("There is no data for "+title);
 					Toast.makeText(c, "Couldn't get any data from the url", Toast.LENGTH_SHORT).show();
 				}
 			}catch(Exception e){

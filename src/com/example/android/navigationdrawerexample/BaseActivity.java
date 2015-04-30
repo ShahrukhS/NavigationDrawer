@@ -186,7 +186,7 @@ public class BaseActivity extends Activity {
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        	openActivity(1);
+        	openActivity(position);
         }
     }
 	protected void openActivity(int position) {

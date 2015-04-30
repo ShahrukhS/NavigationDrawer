@@ -32,7 +32,7 @@ public class MainAdapter extends ArrayAdapter<MainModel>{
 		
 		title.setText(values[position].getTitle());
 		desc.setText(values[position].getDesc());
-		size.setText(String.valueOf(values[position].getSize())+"MB");
+		size.setText(values[position].getSize());
 		img.setImageResource(values[position].getImgRes());
 		return rowView;
 	}

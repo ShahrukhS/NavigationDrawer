@@ -4,9 +4,9 @@ public class MainModel {
 	String title;
 	String desc;
 	int imgRes;
-	double size;
+	String size;
 	
-	public MainModel(String title, String desc, int imgRes, double size) {
+	public MainModel(String title, String desc, int imgRes, String size) {
 		super();
 		this.title = title;
 		this.desc = desc;
@@ -19,10 +19,10 @@ public class MainModel {
 	public void setImgRes(int imgRes) {
 		this.imgRes = imgRes;
 	}
-	public double getSize() {
+	public String getSize() {
 		return size;
 	}
-	public void setSize(double size) {
+	public void setSize(String size) {
 		this.size = size;
 	}
 	public String getDesc() {
