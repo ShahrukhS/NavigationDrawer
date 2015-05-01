@@ -14,9 +14,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,15 +41,21 @@ public class MainMenu extends BaseActivity{
 		title = mPlanetTitles[position];
 		setTitle(title);
 		new Read().execute(this);
-		/*mMainListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+		mMainListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
 			@Override
-			public void onItemClick(AdapterView<?> parent, View view,
-					int position, long id) {
-				String title = values[position].getTitle();
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				Intent travel = new Intent(getApplicationContext(), AudioPlayer.class);
+				Bundle backpack = new Bundle();
+				backpack.putString("title", values[position].getTitle());
+				backpack.putString("desc", values[position].getDesc());
+				backpack.putString("size", values[position].getSize());
+				//backpack.putString("URL", values[position].getURL());
+				travel.putExtras(backpack);
+				startActivity(travel);
 			}
 		
-		});*/
+		});
 	}
 	private class Read extends AsyncTask<Context, Void, Void>{
 		Context c;
@@ -83,7 +92,7 @@ public class MainMenu extends BaseActivity{
 				}else{
 					values = new MainModel[0];
 					txtnoData.setText("There is no data for "+title);
-					Toast.makeText(c, "Couldn't get any data from the url", Toast.LENGTH_SHORT).show();
+					Toast.makeText(c, "Couldn't get any data from the server", Toast.LENGTH_SHORT).show();
 				}
 			}catch(Exception e){
 				e.printStackTrace();
@@ -94,7 +103,10 @@ public class MainMenu extends BaseActivity{
 		@Override
 		protected void onPostExecute(Void result) {
 			super.onPostExecute(result);
-			mMainListView.setAdapter(new MainAdapter(c, values));
+			if(values.length > 0)
+				mMainListView.setAdapter(new MainAdapter(c, values));
+			else
+				txtnoData.setText("There is no data for "+title);
 		}
 	}
 }
