@@ -8,8 +8,10 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import android.content.Context;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -18,11 +20,13 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class AudioPlayer extends BaseActivity {
-	private static String fileName = "download.mp3";
-    private static final String MY_URL = "http://soundz.mp3slash.net/indian/yrfstunningdancetracks/[Songs.PK]%20YRF%20Stunning%20Dance%20Tracks%20-%2001%20-%20Ishq%20Shava.mp3";
+	private static String fileName = "[Songs.PK]%20YRF%20Stunning%20Dance%20Tracks%20-%2001%20-%20Ishq%20Shava.mp3";
+    private static final String MY_URL = "http://soundz.mp3slash.net/indian/yrfstunningdancetracks/";
 	MediaPlayer mediaPlayer;
 	SeekBar seekbar; Handler seekHandler = new Handler();
 	ImageButton btnPlay, btnBackward, btnForward, btnDownload;
@@ -38,7 +42,6 @@ public class AudioPlayer extends BaseActivity {
 		txtVocalist = (TextView) findViewById(R.id.txtVocalist);
 		txtSize = (TextView) findViewById(R.id.txtSize);
 		seekbar = (SeekBar) findViewById(R.id.seekbar);
-		seekbar.setMax(mediaPlayer.getDuration());
 		
 		Bundle backpack = getIntent().getExtras();
 		txtTitle.setText(backpack.getString("title"));
@@ -56,7 +59,6 @@ public class AudioPlayer extends BaseActivity {
 		mediaPlayer = new MediaPlayer();
 		mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 		init();
-		seekUpdation();
 		try {
 			mediaPlayer.setDataSource(theurl);
 		} catch (IllegalArgumentException e) {
@@ -81,6 +83,10 @@ public class AudioPlayer extends BaseActivity {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		seekbar.setProgress(mediaPlayer.getCurrentPosition());
+		seekbar.setMax(mediaPlayer.getDuration());
+		
 		btnPlay.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -93,10 +99,36 @@ public class AudioPlayer extends BaseActivity {
 				}
 			}
 		});
+		seekHandler.removeCallbacks(run);
+		seekHandler.postDelayed(run, 1000);
 		btnDownload.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				audioDownload();
+				new audioDownload(getBaseContext()).execute(MY_URL, fileName);
+			}
+		});
+		seekbar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+			
+			@Override
+			public void onStopTrackingTouch(SeekBar seekBar) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void onStartTrackingTouch(SeekBar seekBar) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void onProgressChanged(SeekBar seekBar, int progress,
+					boolean fromUser) {
+				// TODO Auto-generated method stub
+				if(fromUser){
+					mediaPlayer.seekTo(progress);
+			        seekbar.setProgress(progress);
+				}
 			}
 		});
 		/*btnForward.setOnClickListener(new View.OnClickListener() {
@@ -116,50 +148,63 @@ public class AudioPlayer extends BaseActivity {
             }
         });*/
 	}
-	public void audioDownload(){
-		URL url;
-		try {
-			url = new URL(MY_URL);
-			HttpURLConnection c;
-			c = (HttpURLConnection) url.openConnection();		
-	        c.setRequestMethod("GET");
-	        c.setDoOutput(true);
-	        c.connect();
-	
-	        String PATH = Environment.getExternalStorageDirectory()+ "/FaizaneAshrafi/";
-	        Log.d("Abhan", "PATH: " + PATH);
-	        File file = new File(PATH);
-	        if(!file.exists()) {
-	           file.mkdirs();
-	        }
-	        File outputFile = new File(file, fileName);
-	        FileOutputStream fos = new FileOutputStream(outputFile);
-	        InputStream is = c.getInputStream();
-	        byte[] buffer = new byte[1024];
-	        int len1 = 0;
-	        while ((len1 = is.read(buffer)) != -1) {
-	            fos.write(buffer, 0, len1);
-	        }
-	        //fos.flush();
-	        fos.close();
-	        is.close();
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
 	Runnable run = new Runnable() {
 		@Override
 		public void run() {
-			seekUpdation();
+				if(mediaPlayer.isPlaying())
+					Toast.makeText(getBaseContext(), String.valueOf(mediaPlayer.getDuration()), Toast.LENGTH_SHORT).show();
+					seekbar.setProgress(mediaPlayer.getCurrentPosition());
+					seekHandler.postDelayed(this, 1000);
 			}
 		};
-	public void seekUpdation() {
-		seekbar.setProgress(mediaPlayer.getCurrentPosition());
-		seekHandler.postDelayed(run, 1000);
+	private class audioDownload extends AsyncTask<String, Void, String> {
+		Context c;
+		audioDownload(Context context){
+			 c = context;
+		}
+		private void downloader(String theurl, String thefile){
+			URL url;
+			try {
+				url = new URL(theurl + thefile);
+				Log.e("Online Url", "download url:" + url.toString());
+				HttpURLConnection c;
+				c = (HttpURLConnection) url.openConnection();		
+		        c.setRequestMethod("GET");
+		        c.setDoOutput(true);
+		        c.connect();
+		
+		        String PATH = Environment.getExternalStorageDirectory()+ "/FaizaneAshrafi/";
+		        Log.e("Phone Path", "PATH: " + PATH);
+		        File file = new File(PATH);
+		        if(!file.exists()) {
+		           file.mkdirs();
+		        }
+		        File outputFile = new File(file, thefile);
+		        FileOutputStream fos = new FileOutputStream(outputFile);
+		        InputStream is = c.getInputStream();
+		        byte[] buffer = new byte[1024*4];
+		        int len1 = 0;
+		        while ((len1 = is.read(buffer)) != -1) {
+		            fos.write(buffer, 0, len1);
+		            fos.flush();
+		        }
+		        fos.close();
+		        is.close();
+			} catch (MalformedURLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	    protected String doInBackground(String... urls) {
+	        downloader(urls[0], urls[1]);
+	        return urls[1];
+	    }
+	    protected void onPostExecute(String result) {
+	    	super.onPostExecute(result);
+	    	Toast.makeText(c, result+" audio has been downloaded", Toast.LENGTH_LONG).show();
+	    }
 	}
-
 }

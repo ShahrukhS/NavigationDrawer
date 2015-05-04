@@ -26,8 +26,9 @@
            android:id="@+id/firstLine"
            android:layout_width="fill_parent"
            android:layout_height="wrap_content"
-           android:gravity="center_vertical"
-           android:textSize="16sp" />
+           android:ellipsize="end"
+           android:singleLine="true"
+           android:textSize="18sp" />
         
         <TextView
            android:id="@+id/secondLine"
@@ -35,13 +36,13 @@
            android:layout_width="fill_parent"
            android:ellipsize="marquee"
            android:singleLine="true"
-           android:textSize="12sp" />
+           android:textSize="16sp" />
 
         <TextView
            android:id="@+id/size"
            android:layout_width="fill_parent"
            android:layout_height="wrap_content"
-           android:textSize="10sp" />
+           android:textSize="14sp" />
     </LinearLayout>
 
 </RelativeLayout>

@@ -21,21 +21,13 @@ public final class R {
         public static final int btn_pause=0x7f020004;
         public static final int btn_play=0x7f020005;
         public static final int drawer_shadow=0x7f020006;
-        public static final int earth=0x7f020007;
-        public static final int ic_drawer=0x7f020008;
-        public static final int ic_launcher=0x7f020009;
-        public static final int iseekbar_progress=0x7f02000a;
-        public static final int jupiter=0x7f02000b;
-        public static final int mars=0x7f02000c;
-        public static final int mercury=0x7f02000d;
-        public static final int neptune=0x7f02000e;
-        public static final int saturn=0x7f02000f;
-        public static final int seekbar_background=0x7f020010;
-        public static final int seekbar_progress=0x7f020011;
-        public static final int seekbar_progress_bg=0x7f020012;
-        public static final int seekbar_thumb=0x7f020013;
-        public static final int uranus=0x7f020014;
-        public static final int venus=0x7f020015;
+        public static final int ic_drawer=0x7f020007;
+        public static final int ic_launcher=0x7f020008;
+        public static final int iseekbar_progress=0x7f020009;
+        public static final int seekbar_background=0x7f02000a;
+        public static final int seekbar_progress=0x7f02000b;
+        public static final int seekbar_progress_bg=0x7f02000c;
+        public static final int seekbar_thumb=0x7f02000d;
     }
     public static final class id {
         public static final int action_websearch=0x7f070011;
