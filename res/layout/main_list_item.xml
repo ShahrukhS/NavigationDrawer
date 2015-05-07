@@ -16,7 +16,7 @@
 	
 	<LinearLayout
        android:layout_width="fill_parent"
-       android:layout_height="fill_parent"
+       android:layout_height="wrap_content"
        android:layout_toRightOf="@id/icon"
        android:layout_alignParentBottom="true"
        android:orientation="vertical" 
@@ -37,12 +37,6 @@
            android:ellipsize="marquee"
            android:singleLine="true"
            android:textSize="16sp" />
-
-        <TextView
-           android:id="@+id/size"
-           android:layout_width="fill_parent"
-           android:layout_height="wrap_content"
-           android:textSize="14sp" />
     </LinearLayout>
 
 </RelativeLayout>

@@ -11,6 +11,7 @@ import java.net.URL;
 import android.content.Context;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.media.MediaPlayer.OnInfoListener;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
@@ -19,19 +20,25 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class AudioPlayer extends BaseActivity {
-	private static String fileName = "[Songs.PK]%20YRF%20Stunning%20Dance%20Tracks%20-%2001%20-%20Ishq%20Shava.mp3";
-    private static final String MY_URL = "http://soundz.mp3slash.net/indian/yrfstunningdancetracks/";
+public class AudioPlayer extends BaseActivity {    
 	MediaPlayer mediaPlayer;
 	SeekBar seekbar; Handler seekHandler = new Handler();
 	ImageButton btnPlay, btnBackward, btnForward, btnDownload;
-	TextView txtTitle, txtVocalist, txtSize;
-	String theurl = "http://soundz.mp3slash.net/indian/yrfstunningdancetracks/[Songs.PK]%20YRF%20Stunning%20Dance%20Tracks%20-%2001%20-%20Ishq%20Shava.mp3";
+	TextView txtTitle, txtVocalist;
+	TextView txtLoader;
+	
+	private static String fileName = "[Songs.PK]%20YRF%20Stunning%20Dance%20Tracks%20-%2001%20-%20Ishq%20Shava.mp3";
+	String downloadURL="";
+//    "http://soundz.mp3slash.net/indian/yrfstunningdancetracks/";
+	private int seekForwardTime = 5000; // 5000 milliseconds
+    private int seekBackwardTime = 5000; // 5000 milliseconds
+	String theurl = "http://faizaneashraf.com/";
 	
 	public void init(){
 		btnPlay = (ImageButton) findViewById(R.id.btnPlay);
@@ -40,13 +47,14 @@ public class AudioPlayer extends BaseActivity {
 		btnDownload = (ImageButton) findViewById(R.id.btnDownload);
 		txtTitle = (TextView) findViewById(R.id.txtTitle);
 		txtVocalist = (TextView) findViewById(R.id.txtVocalist);
-		txtSize = (TextView) findViewById(R.id.txtSize);
 		seekbar = (SeekBar) findViewById(R.id.seekbar);
+		txtLoader = (TextView) findViewById(R.id.txtLoader);
 		
 		Bundle backpack = getIntent().getExtras();
 		txtTitle.setText(backpack.getString("title"));
 		txtVocalist.setText(backpack.getString("desc"));
-		txtSize.setText(backpack.getString("size"));
+		String tempUrl = backpack.getString("URL").replace(" ","%20");
+		theurl = theurl + tempUrl;
 	}
 	
 	@Override
@@ -60,6 +68,7 @@ public class AudioPlayer extends BaseActivity {
 		mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 		init();
 		try {
+			//theurl = "http://soundz.mp3slash.net/indian/yrfstunningdancetracks/[Songs.PK]%20YRF%20Stunning%20Dance%20Tracks%20-%2001%20-%20Ishq%20Shava.mp3";
 			mediaPlayer.setDataSource(theurl);
 		} catch (IllegalArgumentException e) {
 			// TODO Auto-generated catch block
@@ -100,13 +109,31 @@ public class AudioPlayer extends BaseActivity {
 			}
 		});
 		seekHandler.removeCallbacks(run);
-		seekHandler.postDelayed(run, 1000);
+		seekHandler.postDelayed(run, 10000);
 		btnDownload.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				new audioDownload(getBaseContext()).execute(MY_URL, fileName);
+				new audioDownload(getBaseContext()).execute(downloadURL, fileName);
 			}
 		});
+		/*mediaPlayer.setOnInfoListener(new OnInfoListener() {
+            @Override
+            public boolean onInfo(MediaPlayer mp, int what, int extra) {
+                if (what == MediaPlayer.MEDIA_INFO_BUFFERING_START) {
+                	spinner.setVisibility(View.VISIBLE);
+                } else if (what == MediaPlayer.MEDIA_INFO_BUFFERING_END) {
+                    spinner.setVisibility(View.GONE);
+                }
+                return false;
+            }
+        });*/
+		mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                mediaPlayer.stop();
+                mediaPlayer.release();
+            }
+        });
 		seekbar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
 			
 			@Override
@@ -131,7 +158,7 @@ public class AudioPlayer extends BaseActivity {
 				}
 			}
 		});
-		/*btnForward.setOnClickListener(new View.OnClickListener() {
+		btnForward.setOnClickListener(new View.OnClickListener() {
 			 
             @Override
             public void onClick(View arg0) {
@@ -146,15 +173,32 @@ public class AudioPlayer extends BaseActivity {
                 	mediaPlayer.seekTo(mediaPlayer.getDuration());
                 }
             }
-        });*/
+        });
+		btnBackward.setOnClickListener(new View.OnClickListener() {
+			 
+            @Override
+            public void onClick(View arg0) {
+                // get current song position
+                int currentPosition = mediaPlayer.getCurrentPosition();
+                // check if seekBackward time is greater than 0 sec
+                if(currentPosition - seekBackwardTime >= 0){
+                    // forward song
+                    mediaPlayer.seekTo(currentPosition - seekBackwardTime);
+                }else{
+                    // backward to starting position
+                	mediaPlayer.seekTo(0);
+                }
+ 
+            }
+        });
 	}
 	Runnable run = new Runnable() {
 		@Override
 		public void run() {
-				if(mediaPlayer.isPlaying())
-					Toast.makeText(getBaseContext(), String.valueOf(mediaPlayer.getDuration()), Toast.LENGTH_SHORT).show();
+				if(mediaPlayer.isPlaying()){
 					seekbar.setProgress(mediaPlayer.getCurrentPosition());
 					seekHandler.postDelayed(this, 1000);
+				}
 			}
 		};
 	private class audioDownload extends AsyncTask<String, Void, String> {

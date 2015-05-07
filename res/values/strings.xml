@@ -17,7 +17,8 @@
 <resources>
     <string name="app_name">Faizan e Ashrafi</string>
     <string-array name="main_menu"> <!-- planets_array -->
-        <item>Hammd-O-Naat</item>
+        <item>Naat</item>
+        <item>Hamd</item>
         <item>Speeches</item>
         <item>Vocalists</item>
         <item>Speakers</item>

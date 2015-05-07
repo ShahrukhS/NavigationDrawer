@@ -16,6 +16,7 @@
 
 package com.example.android.navigationdrawerexample;
 
+import android.animation.LayoutTransition;
 import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Context;
@@ -24,6 +25,7 @@ import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -34,7 +36,9 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 /**
@@ -88,10 +92,6 @@ public class BaseActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         
-        if(isOnline() == false){
-        	System.exit(0);
-        }
-        
         mTitle = mDrawerTitle = getTitle();
         mPlanetTitles = getResources().getStringArray(R.array.main_menu);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -129,16 +129,20 @@ public class BaseActivity extends Activity {
             }
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
-
-        if(isLaunch){
-			 /**
-			  *Setting this flag false so that next time it will not open our first activity.
-			  *We have to use this flag because we are using this BaseActivity as parent activity to our other activity.
-			  *In this case this base activity will always be call when any child activity will launch.
-			  */
-			isLaunch = false;
-			openActivity(0);
-		}
+        
+        if(isOnline()){
+	        if(isLaunch){
+				 /**
+				  *Setting this flag false so that next time it will not open our first activity.
+				  *We have to use this flag because we are using this BaseActivity as parent activity to our other activity.
+				  *In this case this base activity will always be call when any child activity will launch.
+				  */
+				isLaunch = false;
+				openActivity(0);
+			}
+        }else{
+        	Toast.makeText(getBaseContext(), "No internet connection found.", Toast.LENGTH_LONG).show();
+        }
     }
 
     public boolean isOnline() {
@@ -159,6 +163,13 @@ public class BaseActivity extends Activity {
     public boolean onPrepareOptionsMenu(Menu menu) {
         // If the nav drawer is open, hide action items related to the content view
         boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
+        /*SearchView searchView = (SearchView) menu.findItem(R.id.action_websearch).getActionView();
+        //Get the ID for the search bar LinearLayout
+        int searchBarId = searchView.getContext().getResources().getIdentifier("android:id/search_bar", null, null);
+        //Get the search bar Linearlayout
+        LinearLayout searchBar = (LinearLayout) searchView.findViewById(searchBarId);
+        //Give the Linearlayout a transition animation.
+        searchBar.setLayoutTransition(new LayoutTransition());*/
         menu.findItem(R.id.action_websearch).setVisible(!drawerOpen);
         return super.onPrepareOptionsMenu(menu);
     }
@@ -172,7 +183,7 @@ public class BaseActivity extends Activity {
         }
         // Handle action buttons
         switch(item.getItemId()) {
-        case R.id.action_websearch:
+        /*case R.id.action_websearch:
             // create intent to perform web search for this planet
             Intent intent = new Intent(Intent.ACTION_WEB_SEARCH);
             intent.putExtra(SearchManager.QUERY, getActionBar().getTitle());
@@ -182,7 +193,7 @@ public class BaseActivity extends Activity {
             } else {
                 Toast.makeText(this, R.string.app_not_available, Toast.LENGTH_LONG).show();
             }
-            return true;
+            return true;*/
         default:
             return super.onOptionsItemSelected(item);
         }
@@ -192,7 +203,11 @@ public class BaseActivity extends Activity {
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        	openActivity(position);
+        	if(!isOnline()){
+        		Toast.makeText(getBaseContext(), "No internet connection found.", Toast.LENGTH_SHORT).show();
+        	}else {
+        		openActivity(position);
+        	}
         }
     }
 	protected void openActivity(int position) {
@@ -201,19 +216,34 @@ public class BaseActivity extends Activity {
 		 * We can set title & itemChecked here but as this BaseActivity is parent for other activity,
 		 * So whenever any activity is going to launch this BaseActivity is also going to be called and
 		 * it will reset this value because of initialization in onCreate method.
+		 * 
 		 * So that we are setting this in child activity.   
 		 */
 //		mDrawerList.setItemChecked(position, true);
 //		setTitle(listArray[position]);
 		mDrawerLayout.closeDrawer(mDrawerList);
 		BaseActivity.position = position; //Setting currently selected position in this field so that it will be available in our child activities.
-		
+		Intent in;
 		switch (position) {
 		case 0:
-			startActivity(new Intent(this, MainMenu.class));
+			in = new Intent(this, MainMenu.class);
+			in.putExtra("param", "naat");
+			startActivity(in);
 			break;
 		case 1:
-			startActivity(new Intent(this, AudioPlayer.class));
+			in = new Intent(this, MainMenu.class);
+			in.putExtra("param", "hamd");
+			startActivity(in);
+			break;
+		case 2:
+			in = new Intent(this, MainMenu.class);
+			in.putExtra("param", "speeches");
+			startActivity(in);
+			break;
+		case 5:
+			in = new Intent(this, MainMenu.class);
+			in.putExtra("param", "books");
+			startActivity(in);
 			break;
 		default:
 			break;
@@ -261,6 +291,26 @@ public class BaseActivity extends Activity {
         // Pass any configuration change to the drawer toggls
         mDrawerToggle.onConfigurationChanged(newConfig);
     }
+
+	@Override
+	protected void onStop() {
+		// TODO Auto-generated method stub
+		super.onStop();
+		
+	}
+
+	@Override
+	protected void onPause() {
+		// TODO Auto-generated method stub
+		super.onPause();
+		finish();
+	}
+
+	@Override
+	protected void onStart() {
+		// TODO Auto-generated method stub
+		super.onStart();
+	}
 
     /**
      * Fragment that appears in the "content_frame", shows a planet

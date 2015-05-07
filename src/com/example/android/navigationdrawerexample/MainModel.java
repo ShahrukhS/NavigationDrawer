@@ -4,14 +4,15 @@ public class MainModel {
 	String title;
 	String desc;
 	int imgRes;
-	String size;
+	String url;
 	
-	public MainModel(String title, String desc, int imgRes, String size) {
+	public MainModel(String desc, int imgRes, String url) {
 		super();
-		this.title = title;
 		this.desc = desc;
 		this.imgRes = imgRes;
-		this.size = size;
+		this.url = url;
+		String titleTemp[] = url.split("/");
+		this.title = titleTemp[titleTemp.length-1];
 	}
 	public int getImgRes() {
 		return imgRes;
@@ -19,11 +20,11 @@ public class MainModel {
 	public void setImgRes(int imgRes) {
 		this.imgRes = imgRes;
 	}
-	public String getSize() {
-		return size;
+	public String getUrl() {
+		return url;
 	}
-	public void setSize(String size) {
-		this.size = size;
+	public void setUrl(String url) {
+		this.url = url;
 	}
 	public String getDesc() {
 		return desc;

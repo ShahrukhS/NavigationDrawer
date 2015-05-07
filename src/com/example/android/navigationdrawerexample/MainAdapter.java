@@ -27,12 +27,10 @@ public class MainAdapter extends ArrayAdapter<MainModel>{
 		TextView title, desc, size;
 		title = (TextView) rowView.findViewById(R.id.firstLine);
 		desc = (TextView) rowView.findViewById(R.id.secondLine);
-		size = (TextView) rowView.findViewById(R.id.size);
 		ImageView img = (ImageView) rowView.findViewById(R.id.icon);
 		
 		title.setText(values[position].getTitle());
 		desc.setText(values[position].getDesc());
-		size.setText(values[position].getSize());
 		img.setImageResource(values[position].getImgRes());
 		return rowView;
 	}
