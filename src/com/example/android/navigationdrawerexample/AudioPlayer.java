@@ -11,7 +11,7 @@ import java.net.URL;
 import android.content.Context;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
-import android.media.MediaPlayer.OnInfoListener;
+import android.media.MediaPlayer.OnErrorListener;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
@@ -19,8 +19,8 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
@@ -29,22 +29,23 @@ import android.widget.Toast;
 public class AudioPlayer extends BaseActivity {    
 	MediaPlayer mediaPlayer;
 	SeekBar seekbar; Handler seekHandler = new Handler();
-	ImageButton btnPlay, btnBackward, btnForward, btnDownload;
+	ImageButton btnPlay, btnBackward, btnForward;
+	Button btnDownload;
 	TextView txtTitle, txtVocalist;
 	TextView txtLoader;
 	
-	private static String fileName = "[Songs.PK]%20YRF%20Stunning%20Dance%20Tracks%20-%2001%20-%20Ishq%20Shava.mp3";
+	//"http://soundz.mp3slash.net/indian/yrfstunningdancetracks/[Songs.PK]%20YRF%20Stunning%20Dance%20Tracks%20-%2001%20-%20Ishq%20Shava.mp3";
+	private String fileName = "";
 	String downloadURL="";
-//    "http://soundz.mp3slash.net/indian/yrfstunningdancetracks/";
 	private int seekForwardTime = 5000; // 5000 milliseconds
     private int seekBackwardTime = 5000; // 5000 milliseconds
-	String theurl = "http://faizaneashraf.com/";
+	String theurl = "";
 	
 	public void init(){
 		btnPlay = (ImageButton) findViewById(R.id.btnPlay);
 		btnBackward = (ImageButton) findViewById(R.id.btnBackward);
 		btnForward = (ImageButton) findViewById(R.id.btnForward);
-		btnDownload = (ImageButton) findViewById(R.id.btnDownload);
+		btnDownload = (Button) findViewById(R.id.btnDownload);
 		txtTitle = (TextView) findViewById(R.id.txtTitle);
 		txtVocalist = (TextView) findViewById(R.id.txtVocalist);
 		seekbar = (SeekBar) findViewById(R.id.seekbar);
@@ -53,8 +54,11 @@ public class AudioPlayer extends BaseActivity {
 		Bundle backpack = getIntent().getExtras();
 		txtTitle.setText(backpack.getString("title"));
 		txtVocalist.setText(backpack.getString("desc"));
-		String tempUrl = backpack.getString("URL").replace(" ","%20");
-		theurl = theurl + tempUrl;
+		theurl = backpack.getString("URL").replace(" ","%20");
+		String tempfile[] = theurl.split("/");
+		fileName = tempfile[tempfile.length-1];
+		/*int index = theurl.length() - fileName.length();
+		downloadURL = theurl.substring(0, index);*/
 	}
 	
 	@Override
@@ -99,12 +103,16 @@ public class AudioPlayer extends BaseActivity {
 		btnPlay.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if(mediaPlayer.isPlaying() == true){
-					mediaPlayer.pause();
-					btnPlay.setImageResource(R.drawable.btn_play);
+				if(mediaPlayer != null){
+					if(mediaPlayer.isPlaying() == true){
+						mediaPlayer.pause();
+						btnPlay.setImageResource(R.drawable.btn_play);
+					}else{
+						mediaPlayer.start();
+						btnPlay.setImageResource(R.drawable.btn_pause);
+					}
 				}else{
-					mediaPlayer.start();
-					btnPlay.setImageResource(R.drawable.btn_pause);
+					Toast.makeText(getBaseContext(), "Error occurred while playing audio.", Toast.LENGTH_SHORT).show();
 				}
 			}
 		});
@@ -113,7 +121,7 @@ public class AudioPlayer extends BaseActivity {
 		btnDownload.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				new audioDownload(getBaseContext()).execute(downloadURL, fileName);
+				new audioDownload(getBaseContext()).execute(theurl, fileName);
 			}
 		});
 		/*mediaPlayer.setOnInfoListener(new OnInfoListener() {
@@ -127,6 +135,17 @@ public class AudioPlayer extends BaseActivity {
                 return false;
             }
         });*/
+		mediaPlayer.setOnErrorListener(new OnErrorListener(){
+		    public boolean onError(MediaPlayer mp, int what, int extra){
+		    	Toast.makeText(getBaseContext(), "Error occurred while playing audio.", Toast.LENGTH_SHORT).show();
+			    mediaPlayer.stop();
+			    seekHandler.removeCallbacks(run);
+			    mediaPlayer.release();
+			    mediaPlayer=null;
+			    return true;
+		    }
+		});
+		
 		mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mp) {
@@ -162,33 +181,40 @@ public class AudioPlayer extends BaseActivity {
 			 
             @Override
             public void onClick(View arg0) {
-                // get current song position
-                int currentPosition = mediaPlayer.getCurrentPosition();
-                // check if seekForward time is lesser than song duration
-                if(currentPosition + seekForwardTime <= mediaPlayer.getDuration()){
-                    // forward song
-                	mediaPlayer.seekTo(currentPosition + seekForwardTime);
-                }else{
-                    // forward to end position
-                	mediaPlayer.seekTo(mediaPlayer.getDuration());
-                }
+            	if(mediaPlayer != null){
+					// get current song position
+	                int currentPosition = mediaPlayer.getCurrentPosition();
+	                // check if seekForward time is lesser than song duration
+	                if(currentPosition + seekForwardTime <= mediaPlayer.getDuration()){
+	                    // forward song
+	                	mediaPlayer.seekTo(currentPosition + seekForwardTime);
+	                }else{
+	                    // forward to end position
+	                	mediaPlayer.seekTo(mediaPlayer.getDuration());
+	                }
+            	}else{
+					Toast.makeText(getBaseContext(), "Error occurred while playing audio.", Toast.LENGTH_SHORT).show();
+				}
             }
         });
 		btnBackward.setOnClickListener(new View.OnClickListener() {
 			 
             @Override
             public void onClick(View arg0) {
-                // get current song position
-                int currentPosition = mediaPlayer.getCurrentPosition();
-                // check if seekBackward time is greater than 0 sec
-                if(currentPosition - seekBackwardTime >= 0){
-                    // forward song
-                    mediaPlayer.seekTo(currentPosition - seekBackwardTime);
-                }else{
-                    // backward to starting position
-                	mediaPlayer.seekTo(0);
-                }
- 
+            	if(mediaPlayer != null){
+	                // get current song position
+	                int currentPosition = mediaPlayer.getCurrentPosition();
+	                // check if seekBackward time is greater than 0 sec
+	                if(currentPosition - seekBackwardTime >= 0){
+	                    // forward song
+	                    mediaPlayer.seekTo(currentPosition - seekBackwardTime);
+	                }else{
+	                    // backward to starting position
+	                	mediaPlayer.seekTo(0);
+	                }
+            	}else{
+    				Toast.makeText(getBaseContext(), "Error occurred while playing audio.", Toast.LENGTH_SHORT).show();
+    			}
             }
         });
 	}
@@ -201,7 +227,7 @@ public class AudioPlayer extends BaseActivity {
 				}
 			}
 		};
-	private class audioDownload extends AsyncTask<String, Void, String> {
+	class audioDownload extends AsyncTask<String, Void, String> {
 		Context c;
 		audioDownload(Context context){
 			 c = context;
@@ -209,7 +235,7 @@ public class AudioPlayer extends BaseActivity {
 		private void downloader(String theurl, String thefile){
 			URL url;
 			try {
-				url = new URL(theurl + thefile);
+				url = new URL(theurl);
 				Log.e("Online Url", "download url:" + url.toString());
 				HttpURLConnection c;
 				c = (HttpURLConnection) url.openConnection();		
@@ -226,7 +252,7 @@ public class AudioPlayer extends BaseActivity {
 		        File outputFile = new File(file, thefile);
 		        FileOutputStream fos = new FileOutputStream(outputFile);
 		        InputStream is = c.getInputStream();
-		        byte[] buffer = new byte[1024*4];
+		        byte[] buffer = new byte[1024];
 		        int len1 = 0;
 		        while ((len1 = is.read(buffer)) != -1) {
 		            fos.write(buffer, 0, len1);
@@ -248,7 +274,7 @@ public class AudioPlayer extends BaseActivity {
 	    }
 	    protected void onPostExecute(String result) {
 	    	super.onPostExecute(result);
-	    	Toast.makeText(c, result+" audio has been downloaded", Toast.LENGTH_LONG).show();
+	    	Toast.makeText(c, result+" audio has been downloaded", Toast.LENGTH_SHORT).show();
 	    }
 	}
 }

@@ -16,16 +16,13 @@
 
 package com.example.android.navigationdrawerexample;
 
-import android.animation.LayoutTransition;
 import android.app.Activity;
-import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -36,9 +33,9 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
+import android.widget.SearchView.OnQueryTextListener;
 import android.widget.Toast;
 
 /**
@@ -82,6 +79,7 @@ public class BaseActivity extends Activity {
     DrawerLayout mDrawerLayout;
     ListView mDrawerList;
     ActionBarDrawerToggle mDrawerToggle;
+    SearchView searchView;
 
     CharSequence mDrawerTitle;
     CharSequence mTitle;
@@ -163,13 +161,7 @@ public class BaseActivity extends Activity {
     public boolean onPrepareOptionsMenu(Menu menu) {
         // If the nav drawer is open, hide action items related to the content view
         boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
-        /*SearchView searchView = (SearchView) menu.findItem(R.id.action_websearch).getActionView();
-        //Get the ID for the search bar LinearLayout
-        int searchBarId = searchView.getContext().getResources().getIdentifier("android:id/search_bar", null, null);
-        //Get the search bar Linearlayout
-        LinearLayout searchBar = (LinearLayout) searchView.findViewById(searchBarId);
-        //Give the Linearlayout a transition animation.
-        searchBar.setLayoutTransition(new LayoutTransition());*/
+        searchView = (SearchView) menu.findItem(R.id.action_websearch).getActionView();
         menu.findItem(R.id.action_websearch).setVisible(!drawerOpen);
         return super.onPrepareOptionsMenu(menu);
     }
@@ -199,6 +191,7 @@ public class BaseActivity extends Activity {
         }
     }
 
+    
     /* The click listner for ListView in the navigation drawer */
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
         @Override
@@ -219,8 +212,6 @@ public class BaseActivity extends Activity {
 		 * 
 		 * So that we are setting this in child activity.   
 		 */
-//		mDrawerList.setItemChecked(position, true);
-//		setTitle(listArray[position]);
 		mDrawerLayout.closeDrawer(mDrawerList);
 		BaseActivity.position = position; //Setting currently selected position in this field so that it will be available in our child activities.
 		Intent in;
@@ -232,7 +223,7 @@ public class BaseActivity extends Activity {
 			break;
 		case 1:
 			in = new Intent(this, MainMenu.class);
-			in.putExtra("param", "hamd");
+			in.putExtra("param", "dua");
 			startActivity(in);
 			break;
 		case 2:
@@ -240,7 +231,7 @@ public class BaseActivity extends Activity {
 			in.putExtra("param", "speeches");
 			startActivity(in);
 			break;
-		case 5:
+		case 3:
 			in = new Intent(this, MainMenu.class);
 			in.putExtra("param", "books");
 			startActivity(in);
@@ -293,23 +284,10 @@ public class BaseActivity extends Activity {
     }
 
 	@Override
-	protected void onStop() {
-		// TODO Auto-generated method stub
-		super.onStop();
-		
-	}
-
-	@Override
 	protected void onPause() {
 		// TODO Auto-generated method stub
 		super.onPause();
 		finish();
-	}
-
-	@Override
-	protected void onStart() {
-		// TODO Auto-generated method stub
-		super.onStart();
 	}
 
     /**

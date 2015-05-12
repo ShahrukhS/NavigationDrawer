@@ -17,13 +17,11 @@
 <resources>
     <string name="app_name">Faizan e Ashrafi</string>
     <string-array name="main_menu"> <!-- planets_array -->
-        <item>Naat</item>
-        <item>Hamd</item>
+        <item>Hamd/Naat</item>
+        <item>Dua/Manajaat</item>
         <item>Speeches</item>
-        <item>Vocalists</item>
-        <item>Speakers</item>
         <item>Books</item>
-        <item>News</item>
+        <item>Contact Us</item>
     </string-array>
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
